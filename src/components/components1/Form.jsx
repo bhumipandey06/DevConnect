@@ -25,7 +25,7 @@ const Form = ({ name, setName, bio, setBio, techStack, setTechStack, github, set
   };
 
   return (
-    <form className="space-y-6">
+    <form className="space-y-6 p-6 bg-white dark:bg-zinc-900 rounded-lg shadow">
       {/* Name Input */}
       <div>
         <label className="block mb-1 font-medium">Full Name</label>
@@ -33,7 +33,7 @@ const Form = ({ name, setName, bio, setBio, techStack, setTechStack, github, set
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Bhumi Pandey"
-          className="w-full px-4 py-2 border rounded"
+          className="w-full px-4 py-2 text-sm sm:text-base border rounded"
         />
       </div>
 
@@ -44,7 +44,7 @@ const Form = ({ name, setName, bio, setBio, techStack, setTechStack, github, set
           value={bio}
           onChange={(e) => setBio(e.target.value)}
           placeholder="e.g. Full Stack Developer"
-          className="w-full px-4 py-2 border rounded"
+          className="w-full px-4 py-2 text-sm sm:text-base border rounded"
         />
       </div>
 

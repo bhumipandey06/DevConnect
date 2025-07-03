@@ -3,7 +3,7 @@ import { Github, Linkedin, Globe } from "lucide-react";
 
 const ProfileCard = ({ name, bio, techStack, github, linkedin, portfolio}) => {
   return (
-    <div className="p-6 bg-white dark:bg-zinc-900 shadow-md rounded-lg">
+    <div className="p-6 bg-white dark:bg-zinc-900 shadow-md rounded-lg space-y-4">
       {name && (
         <h2 className="text-xl font-semibold text-zinc-800 dark:text-white">
           {name}
