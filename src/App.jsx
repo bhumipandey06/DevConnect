@@ -4,7 +4,9 @@ import Header from "./components/components1/Header";
 import Footer from "./components/components1/Footer";
 import Form from "./components/components1/Form";
 import ProfileCard from "./components/components1/ProfileCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+const STORAGE_KEY = "devconnect_profile";
 
 function App() {
   const [name, setName] = useState("");
@@ -13,6 +15,34 @@ function App() {
   const [github, setGithub] = useState("");
   const [linkedin, setLinkedin] = useState("");
   const [portfolio, setPortfolio] = useState("");
+  const [profileImage, setProfileImage] = useState(null);
+
+  useEffect(() => {
+    const savedData = localStorage.getItem(STORAGE_KEY);
+    if (savedData) {
+      const parsed = JSON.parse(savedData);
+      setName(parsed.name || "");
+      setBio(parsed.bio || "");
+      setTechStack(parsed.techStack || []);
+      setGithub(parsed.github || "");
+      setLinkedin(parsed.linkedin || "");
+      setPortfolio(parsed.portfolio || "");
+      setProfileImage(parsed.profileImage || null);
+    }
+  }, []);
+
+  useEffect(() => {
+    const data = {
+      name,
+      bio,
+      techStack,
+      github,
+      linkedin,
+      portfolio,
+      profileImage,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }, [name, bio, techStack, github, linkedin, portfolio, profileImage]);
 
   return (
     <div className="min-h-screen flex flex-col justify-between bg-gray-50 dark:bg-zinc-800">
@@ -37,6 +67,8 @@ function App() {
               setLinkedin={setLinkedin}
               portfolio={portfolio}
               setPortfolio={setPortfolio}
+              profileImage={profileImage}
+              setProfileImage={setProfileImage}
             />
           </div>
           <div>
@@ -50,6 +82,7 @@ function App() {
               github={github}
               linkedin={linkedin}
               portfolio={portfolio}
+              profileImage={profileImage}
             />
           </div>
         </div>

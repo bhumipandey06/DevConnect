@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 // src/components/Form.jsx
 const techOptions = [
   "HTML",
@@ -13,7 +15,21 @@ const techOptions = [
   "Others",
 ];
 
-const Form = ({ name, setName, bio, setBio, techStack, setTechStack, github, setGithub, linkedin, setLinkedin, portfolio, setPortfolio }) => {
+const Form = ({
+  name,
+  setName,
+  bio,
+  setBio,
+  techStack,
+  setTechStack,
+  github,
+  setGithub,
+  linkedin,
+  setLinkedin,
+  portfolio,
+  setPortfolio,
+  setProfileImage,
+}) => {
   const handleCheckboxChange = (tech) => {
     if (techStack.includes(tech)) {
       // remove it
@@ -24,8 +40,29 @@ const Form = ({ name, setName, bio, setBio, techStack, setTechStack, github, set
     }
   };
 
+  const [error, setError] = useState("");
+  const handleSave = () => {
+    if (!name.trim()) {
+      setError("Name is required.");
+      return;
+    }
+    if (github && !github.startsWith("https://")) {
+      setError("GitHub link must start with https://");
+      return;
+    }
+
+    setError(""); // Clear error
+    alert("Profile saved successfully!"); // Replace with actual save logic
+  };
+
   return (
-    <form className="space-y-6 p-6 bg-white dark:bg-zinc-900 rounded-lg shadow">
+    <form
+      className="space-y-6 p-6 bg-white dark:bg-zinc-900 rounded-lg shadow"
+      onSubmit={(e) => {
+        e.preventDefault(); // Prevent actual refresh
+        handleSave();
+      }}
+    >
       {/* Name Input */}
       <div>
         <label className="block mb-1 font-medium">Full Name</label>
@@ -98,6 +135,44 @@ const Form = ({ name, setName, bio, setBio, techStack, setTechStack, github, set
           className="w-full px-4 py-2 border rounded"
         />
       </div>
+
+      <button
+        type="submit"
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+        disabled={!name.trim()}
+      >
+        Save
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+      </button>
+
+      <div>
+        <label className="block mb-1 font-medium">Upload Profile Picture</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                setProfileImage(reader.result); // set base64 URL
+              };
+              reader.readAsDataURL(file);
+            }
+          }}
+          className="block w-full"
+        />
+      </div>
+      <button
+        type="button"
+        className="text-red-500 underline text-sm"
+        onClick={() => {
+          localStorage.removeItem("devconnect_profile"); //or STORAGE_KEY
+          window.location.reload();
+        }}
+      >
+        Clear Profile
+      </button>
     </form>
   );
 };
