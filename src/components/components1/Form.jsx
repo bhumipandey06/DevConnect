@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // src/components/Form.jsx
 const techOptions = [
@@ -54,6 +55,8 @@ const Form = ({
     setError(""); // Clear error
     alert("Profile saved successfully!"); // Replace with actual save logic
   };
+
+  const navigate = useNavigate();
 
   return (
     <form
@@ -138,7 +141,7 @@ const Form = ({
 
       <button
         type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
         disabled={!name.trim()}
       >
         Save
@@ -163,16 +166,27 @@ const Form = ({
           className="block w-full"
         />
       </div>
-      <button
-        type="button"
-        className="text-red-500 underline text-sm"
-        onClick={() => {
-          localStorage.removeItem("devconnect_profile"); //or STORAGE_KEY
-          window.location.reload();
-        }}
-      >
-        Clear Profile
-      </button>
+
+      <div className="flex flex-col sm:flex-row gap-3 mt-4">
+        <button
+          type="button"
+          onClick={() => navigate("/profile")}
+          className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition-all"
+        >
+          View My Public Profile
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            localStorage.removeItem("devconnect_profile");
+            window.location.reload();
+          }}
+          className="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700 transition-all"
+        >
+          Clear Profile
+        </button>
+      </div>
     </form>
   );
 };
