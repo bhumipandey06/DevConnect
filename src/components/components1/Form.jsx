@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getAllProfiles, getProfileById, saveProfile } from "../../utils/profileStorage";
 
 // src/components/Form.jsx
 const techOptions = [
@@ -30,6 +31,8 @@ const Form = ({
   portfolio,
   setPortfolio,
   setProfileImage,
+  savedProfiles,
+  setSavedProfiles,
 }) => {
   const handleCheckboxChange = (tech) => {
     if (techStack.includes(tech)) {
@@ -58,7 +61,49 @@ const Form = ({
 
   const navigate = useNavigate();
 
+  const handleSaveProfile = () => {
+    const profileName = prompt("Enter a name for this profile:");
+    if (!profileName) return;
+  
+    const profileData = {
+      name,
+      bio,
+      github,
+      linkedin,
+      portfolio,
+    };
+  
+    saveProfile(profileName, profileData);
+    alert("✅ Profile Saved Successfully!");
+  };
+  
+  const handleSelectProfile = (e) => {
+    const selectedId = e.target.value;
+    if (!selectedId) return;
+  
+    const selectedProfile = getProfileById(selectedId);
+    if (!selectedProfile) return;
+  
+    const {
+      name: savedName,
+      bio: savedBio,
+      github: savedGithub,
+      linkedin: savedLinkedin,
+      portfolio: savedPortfolio,
+    } = selectedProfile.data;
+  
+    // Set the form states
+    setName(savedName || "");
+    setBio(savedBio || "");
+    setGithub(savedGithub || "");
+    setLinkedin(savedLinkedin || "");
+    setPortfolio(savedPortfolio || "");
+  };
+  
+  
+
   return (
+    
     <form
       className="space-y-6 p-6 bg-white dark:bg-zinc-900 rounded-lg shadow"
       onSubmit={(e) => {
@@ -66,6 +111,23 @@ const Form = ({
         handleSave();
       }}
     >
+      <div className="mb-4">
+  <label className="block font-medium mb-1">Load Saved Profile</label>
+  <select
+    onChange={handleSelectProfile}
+    className="w-full px-3 py-2 border rounded bg-white text-black"
+    defaultValue=""
+  >
+    <option value="" disabled>-- Select a Profile --</option>
+    {savedProfiles.map((profile) => (
+      <option key={profile.id} value={profile.id}>
+        {profile.name}
+      </option>
+    ))}
+  </select>
+</div>
+
+
       {/* Name Input */}
       <div>
         <label className="block mb-1 font-medium">Full Name</label>
@@ -174,6 +236,14 @@ const Form = ({
           className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition-all"
         >
           View My Public Profile
+        </button>
+
+        <button
+          type="button"
+          onClick={handleSaveProfile}
+          className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition-all"
+        >
+          Save Profile
         </button>
 
         <button

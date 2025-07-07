@@ -29,7 +29,7 @@ const Profile = () => {
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-100">
       <header className="bg-white dark:bg-zinc-800 shadow py-4 px-6">
         <div className="max-w-5xl mx-auto flex justify-between items-center">
-          <h1 className="text-lg font-semibold">🚀 DevConnect</h1>
+          <h1 className="text-lg font-semibold">DevConnect</h1>
           <span className="text-sm text-zinc-500">Public Profile</span>
         </div>
       </header>

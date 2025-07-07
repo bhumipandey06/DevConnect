@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Form from "../components/components1/Form";
 import ProfileCard from "../components/components1/ProfileCard";
-
+import { getAllProfiles } from "../utils/profileStorage";
 
 const Home = () => {
   const [name, setName] = useState("");
@@ -11,6 +11,7 @@ const Home = () => {
   const [linkedin, setLinkedin] = useState("");
   const [portfolio, setPortfolio] = useState("");
   const [profileImage, setProfileImage] = useState(null);
+  const [savedProfiles, setSavedProfiles] = useState([]);
 
   const STORAGE_KEY = "devconnect_profile";
 
@@ -41,6 +42,11 @@ const Home = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }, [name, bio, techStack, github, linkedin, portfolio, profileImage]);
 
+  useEffect(() => {
+    const profiles = getAllProfiles();
+    setSavedProfiles(profiles);
+  }, []);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
@@ -62,6 +68,8 @@ const Home = () => {
           setPortfolio={setPortfolio}
           profileImage={profileImage}
           setProfileImage={setProfileImage}
+          savedProfiles={savedProfiles}
+          setSavedProfiles={setSavedProfiles}
         />
       </div>
       <div>
