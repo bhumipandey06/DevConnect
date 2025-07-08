@@ -83,8 +83,10 @@ const Form = ({
     };
 
     saveProfile(profileName, profileData);
-    setSavedProfiles(getAllProfiles()); // update dropdown
-    alert("✅ Profile Saved Successfully!");
+    const updated = getAllProfiles();
+  setSavedProfiles(updated); // Refresh list
+
+  alert("✅ Profile Saved Successfully!");
   };
 
   // ✅ Unified load + select logic

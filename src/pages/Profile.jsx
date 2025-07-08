@@ -37,7 +37,16 @@ const Profile = () => {
       <main className="max-w-xl mx-auto py-10 px-4">
         {profileData ? (
           <>
-            <ProfileCard {...profileData} />
+            <ProfileCard
+  name={profileData.name}
+  bio={profileData.bio}
+  github={profileData.github}
+  linkedin={profileData.linkedin}
+  portfolio={profileData.portfolio}
+  techStack={profileData.techStack}
+  profileImage={profileData.profileImage}
+/>
+
 
             {/* Copy Button */}
             <div className="text-center mt-6">
