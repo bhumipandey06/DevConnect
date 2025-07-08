@@ -26,3 +26,10 @@ export function getProfileById(id) {
   const profiles = getAllProfiles();
   return profiles.find((p) => p.id === id);
 }
+
+// 🔸 Delete profile by ID
+export function deleteProfileById(id) {
+  const profiles = getAllProfiles();
+  const updated = profiles.filter((p) => p.id !== id);
+  localStorage.setItem("devconnect_profiles", JSON.stringify(updated));
+}

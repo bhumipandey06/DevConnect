@@ -12,6 +12,7 @@ const Home = () => {
   const [portfolio, setPortfolio] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [savedProfiles, setSavedProfiles] = useState([]);
+  const [selectedProfileId, setSelectedProfileId] = useState("");
 
   const STORAGE_KEY = "devconnect_profile";
 
@@ -70,6 +71,8 @@ const Home = () => {
           setProfileImage={setProfileImage}
           savedProfiles={savedProfiles}
           setSavedProfiles={setSavedProfiles}
+          selectedProfileId={selectedProfileId}
+          setSelectedProfileId={setSelectedProfileId}
         />
       </div>
       <div>

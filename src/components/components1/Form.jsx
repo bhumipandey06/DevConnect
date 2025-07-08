@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllProfiles, getProfileById, saveProfile } from "../../utils/profileStorage";
+import {
+  deleteProfileById,
+  getAllProfiles,
+  getProfileById,
+  saveProfile,
+} from "../../utils/profileStorage";
 
-// src/components/Form.jsx
+// Tech stack options
 const techOptions = [
   "HTML",
   "CSS",
@@ -30,22 +35,29 @@ const Form = ({
   setLinkedin,
   portfolio,
   setPortfolio,
+  profileImage,
   setProfileImage,
   savedProfiles,
   setSavedProfiles,
+  selectedProfileId,
+  setSelectedProfileId,
 }) => {
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
+
+  // ✅ Handle checkbox selection
   const handleCheckboxChange = (tech) => {
     if (techStack.includes(tech)) {
-      // remove it
       setTechStack(techStack.filter((t) => t !== tech));
     } else {
-      // Add it
       setTechStack([...techStack, tech]);
     }
   };
 
-  const [error, setError] = useState("");
-  const handleSave = () => {
+  // ✅ Save new profile
+  const handleSaveProfile = () => {
+    // validation
+
     if (!name.trim()) {
       setError("Name is required.");
       return;
@@ -54,103 +66,137 @@ const Form = ({
       setError("GitHub link must start with https://");
       return;
     }
+  
+    setError("");//clear previous error
 
-    setError(""); // Clear error
-    alert("Profile saved successfully!"); // Replace with actual save logic
-  };
-
-  const navigate = useNavigate();
-
-  const handleSaveProfile = () => {
     const profileName = prompt("Enter a name for this profile:");
     if (!profileName) return;
-  
+
     const profileData = {
       name,
       bio,
       github,
       linkedin,
       portfolio,
+      techStack,
+      profileImage,
     };
-  
+
     saveProfile(profileName, profileData);
+    setSavedProfiles(getAllProfiles()); // update dropdown
     alert("✅ Profile Saved Successfully!");
   };
-  
+
+  // ✅ Unified load + select logic
   const handleSelectProfile = (e) => {
     const selectedId = e.target.value;
-    if (!selectedId) return;
-  
+    setSelectedProfileId(selectedId);
+
     const selectedProfile = getProfileById(selectedId);
     if (!selectedProfile) return;
-  
+
     const {
       name: savedName,
       bio: savedBio,
       github: savedGithub,
       linkedin: savedLinkedin,
       portfolio: savedPortfolio,
+      techStack: savedTechStack,
+      profileImage: savedProfileImage,
     } = selectedProfile.data;
-  
-    // Set the form states
+
     setName(savedName || "");
     setBio(savedBio || "");
     setGithub(savedGithub || "");
     setLinkedin(savedLinkedin || "");
     setPortfolio(savedPortfolio || "");
+    setTechStack(savedTechStack || []);
+    setProfileImage(savedProfileImage || null);
   };
-  
-  
+
+  // ✅ Delete selected profile
+  const handleDeleteProfile = () => {
+    if (!selectedProfileId) return;
+
+    const confirmDelete = confirm("Are you sure you want to delete this profile?");
+    if (!confirmDelete) return;
+
+    deleteProfileById(selectedProfileId);
+    const updatedProfiles = getAllProfiles();
+    setSavedProfiles(updatedProfiles);
+    setSelectedProfileId("");
+
+    // Optional: Clear form
+    setName("");
+    setBio("");
+    setGithub("");
+    setLinkedin("");
+    setPortfolio("");
+    setTechStack([]);
+    setProfileImage(null);
+
+    alert("🗑️ Profile deleted successfully!");
+  };
 
   return (
-    
     <form
       className="space-y-6 p-6 bg-white dark:bg-zinc-900 rounded-lg shadow"
       onSubmit={(e) => {
-        e.preventDefault(); // Prevent actual refresh
-        handleSave();
+        e.preventDefault();
       }}
     >
+      {/* 🔹 Profile Selector + Delete */}
       <div className="mb-4">
-  <label className="block font-medium mb-1">Load Saved Profile</label>
-  <select
-    onChange={handleSelectProfile}
-    className="w-full px-3 py-2 border rounded bg-white text-black"
-    defaultValue=""
-  >
-    <option value="" disabled>-- Select a Profile --</option>
-    {savedProfiles.map((profile) => (
-      <option key={profile.id} value={profile.id}>
-        {profile.name}
-      </option>
-    ))}
-  </select>
-</div>
+        <label className="block font-medium mb-1">Select Saved Profile</label>
+        <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+          <select
+            onChange={handleSelectProfile}
+            className="w-full sm:w-2/3 px-3 py-2 border rounded bg-white text-black"
+            value={selectedProfileId}
+          >
+            <option value="" disabled>-- Select a Profile --</option>
+            {savedProfiles.map((profile) => (
+              <option key={profile.id} value={profile.id}>
+                {profile.name}
+              </option>
+            ))}
+          </select>
 
+          <button
+            type="button"
+            onClick={handleDeleteProfile}
+            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:bg-gray-400"
+            disabled={!selectedProfileId}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
 
-      {/* Name Input */}
+      {/* 🔹 Name Input */}
       <div>
         <label className="block mb-1 font-medium">Full Name</label>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Bhumi Pandey"
-          className="w-full px-4 py-2 text-sm sm:text-base border rounded"
+          className="w-full px-4 py-2 text-sm border rounded"
         />
+        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
       </div>
 
-      {/* Bio Input */}
+      {/* 🔹 Bio Input */}
       <div>
         <label className="block mb-1 font-medium">Bio</label>
         <textarea
           value={bio}
           onChange={(e) => setBio(e.target.value)}
           placeholder="e.g. Full Stack Developer"
-          className="w-full px-4 py-2 text-sm sm:text-base border rounded"
+          className="w-full px-4 py-2 text-sm border rounded"
         />
       </div>
 
-      {/* Tech Stack Selection */}
+      {/* 🔹 Tech Stack */}
       <div>
         <label className="block mb-1 font-medium">Tech Stack</label>
         <div className="flex flex-wrap gap-4">
@@ -167,7 +213,7 @@ const Form = ({
         </div>
       </div>
 
-      {/* Developer Links Section */}
+      {/* 🔹 Links */}
       <div>
         <label className="block mb-1 font-medium">GitHub Link</label>
         <input
@@ -201,15 +247,7 @@ const Form = ({
         />
       </div>
 
-      <button
-        type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
-        disabled={!name.trim()}
-      >
-        Save
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-      </button>
-
+      {/* 🔹 Upload Profile Picture */}
       <div>
         <label className="block mb-1 font-medium">Upload Profile Picture</label>
         <input
@@ -220,7 +258,7 @@ const Form = ({
             if (file) {
               const reader = new FileReader();
               reader.onloadend = () => {
-                setProfileImage(reader.result); // set base64 URL
+                setProfileImage(reader.result);
               };
               reader.readAsDataURL(file);
             }
@@ -229,11 +267,12 @@ const Form = ({
         />
       </div>
 
+      {/* 🔹 Actions */}
       <div className="flex flex-col sm:flex-row gap-3 mt-4">
         <button
           type="button"
           onClick={() => navigate("/profile")}
-          className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition-all"
+          className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700"
         >
           View My Public Profile
         </button>
@@ -241,7 +280,7 @@ const Form = ({
         <button
           type="button"
           onClick={handleSaveProfile}
-          className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition-all"
+          className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700"
         >
           Save Profile
         </button>
@@ -252,7 +291,7 @@ const Form = ({
             localStorage.removeItem("devconnect_profile");
             window.location.reload();
           }}
-          className="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700 transition-all"
+          className="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700"
         >
           Clear Profile
         </button>
