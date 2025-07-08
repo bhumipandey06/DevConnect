@@ -8,19 +8,41 @@ import {
 } from "../../utils/profileStorage";
 
 // Tech stack options
-const techOptions = [
-  "HTML",
-  "CSS",
-  "JavaScript",
-  "Tailwind Css",
-  "React",
-  "Node.js",
-  "MongoDB",
-  "Python",
-  "Java",
-  "C++",
-  "Others",
-];
+const techOptions = {
+  Frontend: [
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Tailwind CSS",
+    "Bootstrap",
+  ],
+  Backend: [
+    "Node.js",
+    "Express.js",
+    "MongoDB",
+    "Firebase",
+    "PostgreSQL",
+    "GraphQL",
+    "Socket.IO",
+    "Prisma",
+  ],
+  Tools: [
+    "Git",
+    "GitHub",
+    "Vercel",
+    "Netlify",
+    "Render",
+    "Docker",
+    "AWS",
+    "Linux",
+    "Figma",
+  ],
+  Languages: ["Python", "Java", "C++", "Go", "Rust"],
+  Other: ["Zustand", "Other"],
+};
 
 const Form = ({
   name,
@@ -66,8 +88,8 @@ const Form = ({
       setError("GitHub link must start with https://");
       return;
     }
-  
-    setError("");//clear previous error
+
+    setError(""); //clear previous error
 
     const profileName = prompt("Enter a name for this profile:");
     if (!profileName) return;
@@ -84,9 +106,9 @@ const Form = ({
 
     saveProfile(profileName, profileData);
     const updated = getAllProfiles();
-  setSavedProfiles(updated); // Refresh list
+    setSavedProfiles(updated); // Refresh list
 
-  alert("✅ Profile Saved Successfully!");
+    alert("✅ Profile Saved Successfully!");
   };
 
   // ✅ Unified load + select logic
@@ -120,7 +142,9 @@ const Form = ({
   const handleDeleteProfile = () => {
     if (!selectedProfileId) return;
 
-    const confirmDelete = confirm("Are you sure you want to delete this profile?");
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this profile?"
+    );
     if (!confirmDelete) return;
 
     deleteProfileById(selectedProfileId);
@@ -156,7 +180,9 @@ const Form = ({
             className="w-full sm:w-2/3 px-3 py-2 border rounded bg-white text-black"
             value={selectedProfileId}
           >
-            <option value="" disabled>-- Select a Profile --</option>
+            <option value="" disabled>
+              -- Select a Profile --
+            </option>
             {savedProfiles.map((profile) => (
               <option key={profile.id} value={profile.id}>
                 {profile.name}
@@ -198,21 +224,29 @@ const Form = ({
         />
       </div>
 
-      {/* 🔹 Tech Stack */}
+      {/* Tech Stack Section */}
       <div>
         <label className="block mb-1 font-medium">Tech Stack</label>
-        <div className="flex flex-wrap gap-4">
-          {techOptions.map((tech) => (
-            <label key={tech} className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={techStack.includes(tech)}
-                onChange={() => handleCheckboxChange(tech)}
-              />
-              <span>{tech}</span>
-            </label>
-          ))}
-        </div>
+
+        {Object.entries(techOptions).map(([category, techList]) => (
+          <div key={category} className="mb-4">
+            <h4 className="font-semibold text-sm text-zinc-700 dark:text-zinc-300 mb-2">
+              {category}
+            </h4>
+            <div className="flex flex-wrap gap-4">
+              {techList.map((tech) => (
+                <label key={tech} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={techStack.includes(tech)}
+                    onChange={() => handleCheckboxChange(tech)}
+                  />
+                  <span>{tech}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* 🔹 Links */}
